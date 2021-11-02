@@ -2,3 +2,4 @@ Pillow
 pyscreenshot
 pyautogui
 pytesseract
+keyboard
