@@ -6,11 +6,10 @@ import os
 import csv
 
 # border around frame counter (vertical = y)
-leftLimit = 1399
-rightLimit = 1688
-topLimit = 251
-bottomLimit = 314
-
+leftLimit = 1100
+rightLimit = 1220
+topLimit = 727
+bottomLimit = 756
 markFrameKey = 'F8'
 removeLastKey = 'F7'
 
@@ -38,8 +37,11 @@ def getFrameNumber():
 
     # extract text from image
     ocrString = pytesseract.image_to_string(rawImage)
-    ocrString = ocrString[:-2] # remove blank characters from end of number
-
+    print("Raw: " + ocrString)
+    ocrString = ocrString[7:-22]  # remove blank characters from end of number
+    ocrString = ocrString.replace(',', '')
+    ocrString = ocrString.replace('.', '')
+    print("Filtered: " + ocrString)
     return int(ocrString)
 
 
@@ -52,13 +54,9 @@ while True:
         try:
             frameNum = getFrameNumber()
             listOfBlinkFrames.append(frameNum)
-
             print('Blink #' + str(len(listOfBlinkFrames)) + ' recorded at frame #' + str(frameNum))
-
         except:
             print('Unable to read frame value! Check position of screen')
-
-
 
     elif not keyboard.is_pressed(markFrameKey):
         markFrameAlreadyPressed = False
