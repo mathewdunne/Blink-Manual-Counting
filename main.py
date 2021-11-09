@@ -4,18 +4,22 @@ import time
 import keyboard
 import os
 import csv
+from PIL import ImageEnhance
 
 # border around frame counter (vertical = y)
-leftLimit = 1100
-rightLimit = 1220
-topLimit = 727
-bottomLimit = 756
+leftLimit = 1208
+rightLimit = 1395
+topLimit = 721
+bottomLimit = 773
 markFrameKey = 'F8'
 removeLastKey = 'F7'
 
 # values that will be plotted against frame number
 defaultVal = 0.3
 blinkVal = 0.1
+
+# for sharpening filter
+enhancementFactor = 3
 
 markFrameAlreadyPressed = False
 removeLastAlreadyPressed = False
@@ -35,13 +39,26 @@ def getFrameNumber():
     # take screenshot of window
     rawImage = pyscreenshot.grab(bbox=(leftLimit, topLimit, rightLimit, bottomLimit))
 
+    # process image
+    enhancer = ImageEnhance.Sharpness(rawImage)
+    processedIm = enhancer.enhance(enhancementFactor)
+    #processedIm.save('im.png')
+
     # extract text from image
-    ocrString = pytesseract.image_to_string(rawImage)
-    print("Raw: " + ocrString)
-    ocrString = ocrString[7:-22]  # remove blank characters from end of number
+    ocrString = pytesseract.image_to_string(processedIm)
+    print("Raw Text: '" + ocrString +"' end")
+
+    # remove possible characters from number
     ocrString = ocrString.replace(',', '')
     ocrString = ocrString.replace('.', '')
-    print("Filtered: " + ocrString)
+    ocrString = ocrString.replace(')', '')
+    ocrString = ocrString.replace(']', '')
+
+    # narrow string down to only frame number
+    ocrStringList = ocrString.split()
+    ocrString = ocrStringList[1]
+
+    #print("Filtered Text: '" + ocrString +"' end")
     return int(ocrString)
 
 
@@ -54,7 +71,7 @@ while True:
         try:
             frameNum = getFrameNumber()
             listOfBlinkFrames.append(frameNum)
-            print('Blink #' + str(len(listOfBlinkFrames)) + ' recorded at frame #' + str(frameNum))
+            print('\nBlink #' + str(len(listOfBlinkFrames)) + ' recorded at frame #' + str(frameNum))
         except:
             print('Unable to read frame value! Check position of screen')
 
