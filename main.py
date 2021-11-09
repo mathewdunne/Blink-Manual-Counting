@@ -19,7 +19,7 @@ defaultVal = 0.3
 blinkVal = 0.1
 
 # for sharpening filter
-enhancementFactor = 3
+enhancementFactor = 2
 
 markFrameAlreadyPressed = False
 removeLastAlreadyPressed = False
